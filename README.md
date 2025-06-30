@@ -1,1 +1,1 @@
-# Navegaci-n_CampoPotencial
+# Navegación_CampoPotencial
