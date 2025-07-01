@@ -142,6 +142,8 @@ Los valores de _d_ y $\rho_0$ son:
 - _d_ = 0.05 m
 - $\rho_0$ = 0.2 m
 
+El algoritmo completo se puede revisar en [este script](src/tarea3.mlx).
+
 ## Implementación de algoritmo de predicción.
 
 Se decidió implementar un segundo algoritmo de planeación, el cual es basado en el mostrado anteriormente con modificaciones para predicción. A diferencia del APF estándar, este algoritmo introduce una predicción que ayuda a escapar de mínimos locales. También hace que el robot no tenga curvas cerradas, haciendo recorridos más cortos.
@@ -154,10 +156,7 @@ Este algoritmo funciona de la siguiente manera:
 - Actualiza la posición del robot con esas fuerzas.
 - Repite hasta alcanzar el objetivo.
 
-Este método se puede ver en el script [].
-
-## Video de algoritmo 2
-
+Consulta el [script de la tarea 3](src/tarea3_v2.mlx) para ver la implementación detallada.
 
 ## Mapa del gradiente del campo potencial
 
@@ -168,7 +167,8 @@ Se encontró el mapa general del gradiente del campo potencial para cada punto d
 
 ## Animación en matlab de trayectoria 
 
-![Video_animacion](videos/animacion_PurePursuit.mp4)
+- [Animación del primer algoritmo](videos/animacion_PurePursuit.mp4)
+- [Animación del segundo algoritmo](videos/animacion2_PurePursuit.mp4).
 
 ## Conclusiones
 - Se logró simular con éxito ouna estrategia de navegación autónoma basada en campos potenciales para el robot DR12. El robot fue capaz de desplazarse desde un punto de inicio a una meta, evitando obstáculos de manera efectiva.
