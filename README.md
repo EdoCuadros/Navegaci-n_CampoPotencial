@@ -4,15 +4,17 @@ Autores:
 - Eduardo Cuadros
 - Nicolás Moreno
 
+## Objetivo
+
 El propósito de esta tarea fue resolver y simular una misión de navegación autónoma para un robot móvil con ruedas, utilizando el método de navegación por campo potencial artificial. Este método combina fuerzas atractivas (que llevan al robot hacia la meta) y repulsivas (que lo alejan de los obstáculos) para generar trayectorias seguras en entornos con obstáculos. Se trabajó específicamente con el robot DR12, tanto en MATLAB como en CoppeliaSim.
 
-2. Modelo Cinemático del Robot
+## Modelo Cinemático del Robot
 
 Se inició creando el modelo matemático del robot DR12 que describe cómo se mueve en función de las velocidades de sus ruedas. Este modelo se implementó en MATLAB usando la función _differentialDriveKinematics_, que requiere como parámetros el radio de las ruedas y la distancia entre ellas. Las dimensiones del robot se obtuvieron del modelo disponible en CoppeliaSim.
 
 El modelo permite simular cómo reacciona el robot ante distintos comandos de velocidad lineal y angular, lo cual es fundamental para luego aplicar el control de navegación.
 
-2.1 Dimensiones físicas
+### Dimensiones físicas
 - Largo (X): 0.23 m
 - Ancho (Y): 0.158 m
 - Alto (Z): 0.1406 m
@@ -20,8 +22,28 @@ El modelo permite simular cómo reacciona el robot ante distintos comandos de ve
 - Espesor de rueda: 0.026 m
 - Distancia entre ruedas: 0.154 m
 
+## Cálculo de radio R del círculo que circunscribe al robot
 
-3. Descripción del Campo Potencial
+El radio que se quiere calcular se encuentra expresado en la siguiente figura:
+
+![image](https://github.com/user-attachments/assets/2d928c75-5f68-4a37-9b36-ada15530e7a9)
+
+Dicho radio se encuentra con la siguiente ecuación:
+
+$$ R = \sqrt{ \left( \frac{0.158}{2} \right)^2 + \left( \frac{0.23}{2} \right)^2 } = 0.1395\ \text{metros} $$
+
+## Creación del mapa
+
+Una vez encontrado el radio, este valor modifica el factor de escala del mapa de la siguiente forma:
+
+$$ k = 10 * R $$
+
+Con este factor de escala se encuentran las dimensiones de los obstáculos circulares, obteniendo el siguiente mapa.
+
+![mapa_obs](https://github.com/user-attachments/assets/a0c418d2-0027-40a3-9251-6618cd9fc19f)
+
+
+## Descripción del Campo Potencial
 
 $$ (1)\ U_x = U_{att}(x) + U_{rep}(x) $$
 
@@ -98,7 +120,7 @@ F_rep = - F_rep;
 end
 ```
 
-### Implementación del algoritmo de planificación.
+## Implementación del algoritmo de planificación.
  
 
 Después de ajustar las ganancias de la fuerza atractiva y repulsiva se implementa el algoritmo para 4 orientaciones: 30°, 45° ,60°, 90°. Los puntos de inicio y fin para los 3 casos es:
@@ -106,17 +128,49 @@ Después de ajustar las ganancias de la fuerza atractiva y repulsiva se implemen
 - Punto de inicio: (-1.1858, -1.2555)
 - Punto objetivo: (1.3253, 1.2555)
 
-La trayectoria encontrada para cada orientación se ve en la siguiente figura:
+La trayectoria encontrada para cada orientación se ve en la siguiente figura. Los colores rojo, verde, azul oscuro y azul claro; hacen referencia a las orientaciones 30°, 45°, 60° y 90° respectivamente.
 
-INSERTAR MAPA DE TRAYECTORIAS
+![trayeectorias](https://github.com/user-attachments/assets/74c8fca6-adc5-4c94-b85b-9121e43cbd52)
 
+Como se puede ver, en un inicio las trayectorias son distintas debido a las diferentes orientaciones iniciales. Sin embargo, las trayectorias convergen en y se vuelven iguales después de unos pasos. Esto debido a que al ser la misma posición inicial, el robot solo necesita modificar su orientación. Una vez se modifica, la trayectoria para todos es la misma.
 Los parámetros de atracción y repulsión encontrados son los siguientes:
 
 - $K_{att}: 3.00 $
 - $K_{rep}: 1.00 $
 
-### Mapa del gradiente del campo potencial
+Los valores de _d_ y $\rho_0$ son:
+- _d_ = 0.05 m
+- $\rho_0$ = 0.2 m
+
+## Implementación de algoritmo de predicción.
+
+Se decidió implementar un segundo algoritmo de planeación, el cual es basado en el mostrado anteriormente con modificaciones para predicción. A diferencia del APF estándar, este algoritmo introduce una predicción que ayuda a escapar de mínimos locales. También hace que el robot no tenga curvas cerradas, haciendo recorridos más cortos.
+
+Este algoritmo funciona de la siguiente manera:
+- Predice varios pasos hacia adelante usando el algoritmo estándar de campos potenciales.
+- Mide la distancia perpendicular de cada punto predicho a la línea entre el robot y el objetivo.
+- Selecciona como nuevo objetivo temporal el punto con mayor desviación.
+- Calcula fuerzas atractiva y repulsiva hacia ese objetivo temporal.
+- Actualiza la posición del robot con esas fuerzas.
+- Repite hasta alcanzar el objetivo.
+
+Este método se puede ver en el script [].
+
+## Video de algoritmo 2
+
+
+## Mapa del gradiente del campo potencial
 
 Se encontró el mapa general del gradiente del campo potencial para cada punto del mapa, el cual se ve en la siguiente figura.
 
 ![grad_campo](https://github.com/user-attachments/assets/4a07d481-3e25-4a73-baa5-d175a8dfa907)
+
+
+## Animación en matlab de trayectoria 
+
+![Video_animacion](videos/animacion_PurePursuit.mp4)
+
+## Conclusiones
+- Se logró simular con éxito ouna estrategia de navegación autónoma basada en campos potenciales para el robot DR12. El robot fue capaz de desplazarse desde un punto de inicio a una meta, evitando obstáculos de manera efectiva.
+- La implementación en Coppelia del algoritmo de predicción tuvo varios problemas con el control de los motores y las direcciones que tomaba el robot.
+- Los parámetros escogidos para el campo potencial fueron adecuadas. Sin embargo, hace falta un método de convergencia para los parámetros para encontrar los mejores que se acomodan al contexto.
