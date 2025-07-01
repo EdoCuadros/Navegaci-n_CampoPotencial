@@ -6,13 +6,13 @@ Autores:
 
 El propósito de esta tarea fue resolver y simular una misión de navegación autónoma para un robot móvil con ruedas, utilizando el método de navegación por campo potencial artificial. Este método combina fuerzas atractivas (que llevan al robot hacia la meta) y repulsivas (que lo alejan de los obstáculos) para generar trayectorias seguras en entornos con obstáculos. Se trabajó específicamente con el robot DR12, tanto en MATLAB como en CoppeliaSim.
 
-2. Modelo Cinemático del Robot
+## Modelo Cinemático del Robot
 
 Se inició creando el modelo matemático del robot DR12 que describe cómo se mueve en función de las velocidades de sus ruedas. Este modelo se implementó en MATLAB usando la función _differentialDriveKinematics_, que requiere como parámetros el radio de las ruedas y la distancia entre ellas. Las dimensiones del robot se obtuvieron del modelo disponible en CoppeliaSim.
 
 El modelo permite simular cómo reacciona el robot ante distintos comandos de velocidad lineal y angular, lo cual es fundamental para luego aplicar el control de navegación.
 
-2.1 Dimensiones físicas
+### Dimensiones físicas
 - Largo (X): 0.23 m
 - Ancho (Y): 0.158 m
 - Alto (Z): 0.1406 m
@@ -20,8 +20,28 @@ El modelo permite simular cómo reacciona el robot ante distintos comandos de ve
 - Espesor de rueda: 0.026 m
 - Distancia entre ruedas: 0.154 m
 
+## Cálculo de radio R del círculo que circunscribe al robot
 
-3. Descripción del Campo Potencial
+El radio que se quiere calcular se encuentra expresado en la siguiente figura:
+
+![image](https://github.com/user-attachments/assets/2d928c75-5f68-4a37-9b36-ada15530e7a9)
+
+Dicho radio se encuentra con la siguiente ecuación:
+
+$$ R = \sqrt{ \left( \frac{0.158}{2} \right)^2 + \left( \frac{0.23}{2} \right)^2 } = 0.1395\ \text{metros} $$
+
+## Creación del mapa
+
+Una vez encontrado el radio, este valor modifica el factor de escala del mapa de la siguiente forma:
+
+$$ k = 10 * R $$
+
+Con este factor de escala se encuentran las dimensiones de los obstáculos circulares, obteniendo el siguiente mapa.
+
+![mapa_obs](https://github.com/user-attachments/assets/a0c418d2-0027-40a3-9251-6618cd9fc19f)
+
+
+## Descripción del Campo Potencial
 
 $$ (1)\ U_x = U_{att}(x) + U_{rep}(x) $$
 
@@ -98,7 +118,7 @@ F_rep = - F_rep;
 end
 ```
 
-### Implementación del algoritmo de planificación.
+## Implementación del algoritmo de planificación.
  
 
 Después de ajustar las ganancias de la fuerza atractiva y repulsiva se implementa el algoritmo para 4 orientaciones: 30°, 45° ,60°, 90°. Los puntos de inicio y fin para los 3 casos es:
@@ -117,7 +137,7 @@ Los parámetros de atracción y repulsión encontrados son los siguientes:
 - $K_{att}: 3.00 $
 - $K_{rep}: 1.00 $
 
-### Mapa del gradiente del campo potencial
+## Mapa del gradiente del campo potencial
 
 Se encontró el mapa general del gradiente del campo potencial para cada punto del mapa, el cual se ve en la siguiente figura.
 
