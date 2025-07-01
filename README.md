@@ -23,22 +23,28 @@ El modelo permite simular cómo reacciona el robot ante distintos comandos de ve
 
 3. Descripción del Campo Potencial
 
-$$ (1)\ U_x = U_{att}(x) + U_{rep}(x)        $$
+$$ (1)\ U_x = U_{att}(x) + U_{rep}(x) $$
 
 El campo potencial atractivo se define como una función a trozos. Esta función está divida por una distancia _d_, la cual es el cambio entre _distancia corta_ y _distancia larga_. Esto se hace con el objetivo de que la fuerza atractiva no crezca indefinidamente cuando el robot está lejos.
 
 
-$$ (2)\ U_{att}(x)= \left\{ \begin{array}{lcc} \frac{1}{2}K_{att} ||x - x_{goal}||{^2} & si & ||x - x_{goal}|| \leq d\\ \\ dK_{att}||x - x_{goal}||{^2} - \frac{1}{2}K_{att}d{^2} & si & ||x - x_{goal}||> d  \end{array} \right. $$
+$$(2)\ U_{att}(x)= \left\lbrace \begin{array}{lcc} \frac{1}{2}K_{att} ||x - x_{goal}||{^2} & si & ||x - x_{goal}|| \leq d\\
+dK_{att}||x - x_{goal}||{^2} - \frac{1}{2}K_{att}d{^2} & si & ||x - x_{goal}||> d  \end{array} \right. 
+$$
+
 
 La fuerza atractiva se define como el gradiente del campo potencial, como se muestra a continuación:
 
-$$ (3)\ \nabla U_{att}(x)= \left\{ \begin{array}{lcc} K_{att} ||x - x_{goal}|| & si & ||x - x_{goal}|| \leq d\\ \\ \frac{dK_{att}(x - x_{goal})}{ ||x - x_{goal}||}  & si & ||x - x_{goal}||> d  \end{array} \right. $$
+$$ (3)\ \nabla U_{att}(x)= \left\lbrace \begin{array}{lcc} K_{att} ||x - x_{goal}|| & si & ||x - x_{goal}|| \leq d\\ \\ 
+\frac{dK_{att}(x - x_{goal})}{ ||x - x_{goal}||}  & si & ||x - x_{goal}||> d  \end{array} \right.   $$
 
 De igual manera se definen el campo potencial repulsivo y su correspondiente fuerza repulsiva de la siguiente forma.
 
-$$ (4)\ U_{rep}(x)= \left\{ \begin{array}{lcc} \frac{1}{2}K_{rep} \left( \frac{1}{\rho(x)} - \frac{1}{\rho_0} \right)^2   & si &\rho(x)\leq \rho_0\\ \\0 & si & \rho(x) > \rho_0  \end{array} \right. $$
+$$ (4)\ U_{rep}(x)= \left\lbrace \begin{array}{lcc} \frac{1}{2}K_{rep} \left( \frac{1}{\rho(x)} - \frac{1}{\rho_0} \right)^2   & si &\rho(x)\leq \rho_0\\ \\
+0 & si & \rho(x) > \rho_0  \end{array} \right. $$
 
-$$ (5)\ \nabla U_{rep}(x)= \left\{ \begin{array}{lcc} -K_{rep} \left( \frac{1}{\rho(x)} - \frac{1}{\rho_0} \right) \frac{\nabla \rho(x)}{\rho(x)^2}   & si &\rho(x)\leq \rho_0\\ \\0 & si & \rho(x) > \rho_0  \end{array} \right. $$
+$$ (5)\ \nabla U_{rep}(x)= \left\lbrace \begin{array}{lcc} -K_{rep} \left( \frac{1}{\rho(x)} - \frac{1}{\rho_0} \right) \frac{\nabla \rho(x)}{\rho(x)^2}   & si &\rho(x)\leq \rho_0\\ \\
+0 & si & \rho(x) > \rho_0  \end{array} \right. $$
 
 Mientras que el objetivo del campo de atracción es que afecte globalmente, lo que se quiere con el campo repulsivo es que afecte localmente, es decir, en puntos cercanos a la superficie de estos. Esta distancia la definimos como $\rho_0$, y por consiguiente, $\rho(x)$ es la distancia entre el bot y punto más cercano de los obstáculos.
 
@@ -113,3 +119,4 @@ Los parámetros de atracción y repulsión encontrados son los siguientes:
 
 Se encontró el mapa general del gradiente del campo potencial para cada punto del mapa, el cual se ve en la siguiente figura.
 
+![grad_campo](https://github.com/user-attachments/assets/4a07d481-3e25-4a73-baa5-d175a8dfa907)
