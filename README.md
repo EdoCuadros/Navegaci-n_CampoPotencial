@@ -137,6 +137,10 @@ Los parámetros de atracción y repulsión encontrados son los siguientes:
 - $K_{att}: 3.00 $
 - $K_{rep}: 1.00 $
 
+Los valores de _d_ y $\rho_0$ son:
+- _d_ = 0.05 m
+- $\rho_0$ = 0.2 m 
+
 ## Mapa del gradiente del campo potencial
 
 Se encontró el mapa general del gradiente del campo potencial para cada punto del mapa, el cual se ve en la siguiente figura.
