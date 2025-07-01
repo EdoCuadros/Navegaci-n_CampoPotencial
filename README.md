@@ -120,3 +120,8 @@ Los parámetros de atracción y repulsión encontrados son los siguientes:
 Se encontró el mapa general del gradiente del campo potencial para cada punto del mapa, el cual se ve en la siguiente figura.
 
 ![grad_campo](https://github.com/user-attachments/assets/4a07d481-3e25-4a73-baa5-d175a8dfa907)
+
+
+### Animación en matlab de trayectoria 
+
+![Video_animacion](videos/animacion_PurePursuit.mp4)
