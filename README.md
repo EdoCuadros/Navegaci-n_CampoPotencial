@@ -4,6 +4,8 @@ Autores:
 - Eduardo Cuadros
 - Nicolás Moreno
 
+## Objetivo
+
 El propósito de esta tarea fue resolver y simular una misión de navegación autónoma para un robot móvil con ruedas, utilizando el método de navegación por campo potencial artificial. Este método combina fuerzas atractivas (que llevan al robot hacia la meta) y repulsivas (que lo alejan de los obstáculos) para generar trayectorias seguras en entornos con obstáculos. Se trabajó específicamente con el robot DR12, tanto en MATLAB como en CoppeliaSim.
 
 ## Modelo Cinemático del Robot
@@ -128,7 +130,6 @@ Después de ajustar las ganancias de la fuerza atractiva y repulsiva se implemen
 
 La trayectoria encontrada para cada orientación se ve en la siguiente figura. Los colores rojo, verde, azul oscuro y azul claro; hacen referencia a las orientaciones 30°, 45°, 60° y 90° respectivamente.
 
-
 ![trayeectorias](https://github.com/user-attachments/assets/74c8fca6-adc5-4c94-b85b-9121e43cbd52)
 
 Como se puede ver, en un inicio las trayectorias son distintas debido a las diferentes orientaciones iniciales. Sin embargo, las trayectorias convergen en y se vuelven iguales después de unos pasos. Esto debido a que al ser la misma posición inicial, el robot solo necesita modificar su orientación. Una vez se modifica, la trayectoria para todos es la misma.
@@ -139,7 +140,24 @@ Los parámetros de atracción y repulsión encontrados son los siguientes:
 
 Los valores de _d_ y $\rho_0$ son:
 - _d_ = 0.05 m
-- $\rho_0$ = 0.2 m 
+- $\rho_0$ = 0.2 m
+
+## Implementación de algoritmo de predicción.
+
+Se decidió implementar un segundo algoritmo de planeación, el cual es basado en el mostrado anteriormente con modificaciones para predicción. A diferencia del APF estándar, este algoritmo introduce una predicción que ayuda a escapar de mínimos locales. También hace que el robot no tenga curvas cerradas, haciendo recorridos más cortos.
+
+Este algoritmo funciona de la siguiente manera:
+- Predice varios pasos hacia adelante usando el algoritmo estándar de campos potenciales.
+- Mide la distancia perpendicular de cada punto predicho a la línea entre el robot y el objetivo.
+- Selecciona como nuevo objetivo temporal el punto con mayor desviación.
+- Calcula fuerzas atractiva y repulsiva hacia ese objetivo temporal.
+- Actualiza la posición del robot con esas fuerzas.
+- Repite hasta alcanzar el objetivo.
+
+Este método se puede ver en el script [].
+
+## Video de algoritmo 2
+
 
 ## Mapa del gradiente del campo potencial
 
@@ -148,6 +166,11 @@ Se encontró el mapa general del gradiente del campo potencial para cada punto d
 ![grad_campo](https://github.com/user-attachments/assets/4a07d481-3e25-4a73-baa5-d175a8dfa907)
 
 
-### Animación en matlab de trayectoria 
+## Animación en matlab de trayectoria 
 
 ![Video_animacion](videos/animacion_PurePursuit.mp4)
+
+## Conclusiones
+- Se logró simular con éxito ouna estrategia de navegación autónoma basada en campos potenciales para el robot DR12. El robot fue capaz de desplazarse desde un punto de inicio a una meta, evitando obstáculos de manera efectiva.
+- La implementación en Coppelia del algoritmo de predicción tuvo varios problemas con el control de los motores y las direcciones que tomaba el robot.
+- Los parámetros escogidos para el campo potencial fueron adecuadas. Sin embargo, hace falta un método de convergencia para los parámetros para encontrar los mejores que se acomodan al contexto.
