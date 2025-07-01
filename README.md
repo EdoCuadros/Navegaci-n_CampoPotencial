@@ -131,7 +131,7 @@ La trayectoria encontrada para cada orientación se ve en la siguiente figura. L
 
 ![trayeectorias](https://github.com/user-attachments/assets/74c8fca6-adc5-4c94-b85b-9121e43cbd52)
 
-
+Como se puede ver, en un inicio las trayectorias son distintas debido a las diferentes orientaciones iniciales. Sin embargo, las trayectorias convergen en y se vuelven iguales después de unos pasos. Esto debido a que al ser la misma posición inicial, el robot solo necesita modificar su orientación. Una vez se modifica, la trayectoria para todos es la misma.
 Los parámetros de atracción y repulsión encontrados son los siguientes:
 
 - $K_{att}: 3.00 $
