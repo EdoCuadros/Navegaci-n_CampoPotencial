@@ -170,6 +170,94 @@ Se encontró el mapa general del gradiente del campo potencial para cada punto d
 - [Animación del primer algoritmo](videos/animacion_PurePursuit.mp4)
 - [Animación del segundo algoritmo](videos/animacion2_PurePursuit.mp4).
 
+
+### Simulación CoppeliaSim
+Obtenidas las variables “path”, y “robotGoal” con el código anterior, se emplea el siguiente bloque de código para establecer la conexión con CoppeliaSim mediante la API remota, configurando los parámetros cinemáticos del robot diferencial (radio de rueda y distancia entre ejes) e inicializando un controlador "pure pursuit" para seguir la trayectoria predefinida. 
+
+Verificando la posición y orientación actual del robot en la simulación, se procede a calcular las velocidades de los motores necesarias para cumplir con la trayectoria usando el controlador, se envía estos comandos al simulador, y se repite el proceso hasta que el robot alcanza el objetivo dentro de un radio de tolerancia, momento en el cual detiene los motores y finaliza la conexión.
+
+```matlab
+% Establecer la conexión
+sim=remApi('remoteApi'); % usar el archivo prototipo (remoteApiProto.m)
+sim.simxFinish(-1); % si se requiere, cerrar todas las conexiones abiertas.
+clientID=sim.simxStart('127.0.0.1',19999,true,true,5000,5); % asigna el handle de identificación de cliente clientID
+if (clientID>-1)
+    disp('Conexión exitosa')
+end
+
+%definicion del control con las constantes del robot
+DR12 = differentialDriveKinematics("WheelRadius", 0.086/2,"TrackWidth", 0.128, "VehicleInputs", "VehicleSpeedHeadingRate");
+
+controller = controllerPurePursuit;
+release(controller);
+controller.Waypoints = path(:,1:2); % <-- trayectoria desde el campo potencial
+controller.DesiredLinearVelocity = 0.13; % m/s
+controller.MaxAngularVelocity = 3.0;
+controller.LookaheadDistance = 0.04;
+
+goalRadius = 0.1;
+
+% Obtiene el handle de los objetos en la escena.
+[~, robotHandle] = sim.simxGetObjectHandle(clientID, 'dr12', sim.simx_opmode_blocking);
+[~, leftMotor] = sim.simxGetObjectHandle(clientID, 'dr12_leftJoint_', sim.simx_opmode_blocking);
+[~, rightMotor] = sim.simxGetObjectHandle(clientID, 'dr12_rightJoint_', sim.simx_opmode_blocking);
+
+sim.simxSynchronous(clientID, true);
+sim.simxStartSimulation(clientID, sim.simx_opmode_oneshot);
+
+vizRate = 0.05; % tiempo de espera entre ciclos
+
+% % Consulta la posición y orientacion inicial del robot
+[~, P]= sim.simxGetObjectPosition(clientID, robotHandle, -1, sim.simx_opmode_streaming);
+[~, Or] = sim.simxGetObjectOrientation(clientID, robotHandle, -1, sim.simx_opmode_streaming);
+
+distanceToGoal = norm(P(1:2) - robotGoal(:));
+
+pause(0.6);
+
+while( distanceToGoal > goalRadius )
+    
+    % Pose actual
+    [~, P] = sim.simxGetObjectPosition(clientID, robotHandle, -1, sim.simx_opmode_buffer);
+    [~, Or] = sim.simxGetObjectOrientation(clientID, robotHandle, -1, sim.simx_opmode_buffer);
+    
+    % Formato a [x, y, theta]
+
+    robotCurrentPose = [P(1), P(2), Or(3)]';
+    
+    %salidas del controlador
+    [v, omega] = controller(robotCurrentPose);
+
+    % Convertir a velocidad de ruedas
+    v_left = (v - omega * DR12.TrackWidth/2) / DR12.WheelRadius;
+    v_right = (v + omega * DR12.TrackWidth/2) / DR12.WheelRadius;
+    
+    % Envio de comandos a CoppeliaSim
+    sim.simxSetJointTargetVelocity(clientID, leftMotor, v_left, sim.simx_opmode_oneshot);
+    sim.simxSetJointTargetVelocity(clientID, rightMotor, v_right, sim.simx_opmode_oneshot);
+    
+    % actualiza la distancia al objetivo
+    distanceToGoal = norm(robotCurrentPose(1:2) - robotGoal(:));
+    
+
+    waitfor(vizRate);
+end
+
+% Detiene al robot cuando alcance el objetivo
+sim.simxSetJointTargetVelocity(clientID, leftMotor, 0, sim.simx_opmode_oneshot);
+sim.simxSetJointTargetVelocity(clientID, rightMotor, 0, sim.simx_opmode_oneshot);
+
+% Termina el programa y cierra la conexión de MATLAB.
+disp('Programa terminado')
+sim.delete();
+
+```
+
+El resultado en CoppeliaSim puede ser observado a continuación.
+
+[![Watch the video](https://img.youtube.com/vi/sab9WU4T-UA/0.jpg)](https://www.youtube.com/watch?v=sab9WU4T-UA)
+
+
 ## Conclusiones
 - Se logró simular con éxito ouna estrategia de navegación autónoma basada en campos potenciales para el robot DR12. El robot fue capaz de desplazarse desde un punto de inicio a una meta, evitando obstáculos de manera efectiva.
 - La implementación en Coppelia del algoritmo de predicción tuvo varios problemas con el control de los motores y las direcciones que tomaba el robot.
