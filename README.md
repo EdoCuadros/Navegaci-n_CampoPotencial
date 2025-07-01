@@ -106,9 +106,11 @@ Después de ajustar las ganancias de la fuerza atractiva y repulsiva se implemen
 - Punto de inicio: (-1.1858, -1.2555)
 - Punto objetivo: (1.3253, 1.2555)
 
-La trayectoria encontrada para cada orientación se ve en la siguiente figura:
+La trayectoria encontrada para cada orientación se ve en la siguiente figura. Los colores rojo, verde, azul oscuro y azul claro; hacen referencia a las orientaciones 30°, 45°, 60° y 90° respectivamente.
 
-INSERTAR MAPA DE TRAYECTORIAS
+
+![trayeectorias](https://github.com/user-attachments/assets/74c8fca6-adc5-4c94-b85b-9121e43cbd52)
+
 
 Los parámetros de atracción y repulsión encontrados son los siguientes:
 
